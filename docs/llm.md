@@ -5,6 +5,7 @@
 - **UI Layer**: Client components orchestrated by React Query, shadcn/ui primitives, Tailwind CSS, and custom design tokens.
 - **Domain Layer**: DDD + CQRS separation hosted under `src/domain`, providing entities, value objects, repositories, commands, and queries.
 - **Infrastructure**: `src/infrastructure` exposes concrete adapters (Prisma-backed and in-memory repositories) and a lightweight container to share dependencies.
+- **Authentication**: Clerk handles identity via middleware + React components (`@clerk/nextjs`).
 - **API Layer**: Next.js route handlers under `src/app/api` translate HTTP requests into domain commands/queries and serialize responses.
 - **Validation**: Zod schemas in `src/lib/validation` guard both API payloads and client forms.
 - **Testing**: Vitest covers units (domain + infrastructure) and integration (API handlers).
@@ -27,9 +28,12 @@
 - `src/app/api/...` – REST endpoints bridging HTTP to domain services (DDD + CQRS style).
 - `src/components` – UI components (applications page, shadcn-based primitives, table, forms).
 - `src/domain` – Domain core (entities, value objects, commands, queries, repositories interface).
-- `src/infrastructure` – Adapters (Prisma and in-memory persistence, simple container with shared dependencies).
+- `src/infrastructure` – Adapters (Prisma and in-memory persistence, simple container with shared dependencies) plus shared Prisma client.
 - `src/infrastructure/persistence/PrismaApplicationRepository.ts` – Prisma implementation of the repository contract.
 - `src/infrastructure/prismaClient.ts` – Singleton Prisma client with hot-reload safety.
+- `src/middleware.ts` – Clerk middleware to protect routes.
+- `src/app/layout.tsx` – Wraps the app in `<ClerkProvider>` and renders auth controls.
+- `src/lib/auth/isAuthenticated.ts` – Helper to check authentication (bypasses checks during tests).
 - `src/lib` – Utility helpers (API client wrappers, validation schemas, class name helper).
 - `tests/integration` – End-to-end Vitest coverage for route handlers.
 

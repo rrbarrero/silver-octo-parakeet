@@ -1,5 +1,6 @@
 "use client";
 
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -142,67 +143,85 @@ export function ApplicationsPage() {
 
   return (
     <div className="relative isolate">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 via-white/0 to-transparent dark:from-slate-950/40" />
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 lg:px-6">
-        <header className="space-y-6 rounded-3xl border border-white/10 bg-white/70 p-8 shadow-xl backdrop-blur-md dark:border-slate-800/60 dark:bg-slate-900/70">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="space-y-3">
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-700 dark:border-emerald-400/40 dark:text-emerald-200">
-                Career compass
-              </span>
-              <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 lg:text-5xl">
-                A refined workspace for your job hunt
-              </h1>
-              <p className="max-w-2xl text-base text-slate-600 dark:text-slate-300">
-                Capture every lead, monitor interview progress, and keep rich notes in a single, elegant command center designed for clarity and focus.
-              </p>
+      <SignedOut>
+        <div className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center gap-6 px-4 text-center">
+          <h1 className="text-4xl font-semibold text-slate-900 dark:text-slate-100">
+            Sign in to access your job application workspace
+          </h1>
+          <p className="text-base text-slate-600 dark:text-slate-300">
+            Authenticate to create new opportunities, track interview progress, and keep notes synchronized securely.
+          </p>
+          <SignInButton mode="modal">
+            <button className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/30 transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900">
+              Sign in
+            </button>
+          </SignInButton>
+        </div>
+      </SignedOut>
+
+      <SignedIn>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 via-white/0 to-transparent dark:from-slate-950/40" />
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 lg:px-6">
+          <header className="space-y-6 rounded-3xl border border-white/10 bg-white/70 p-8 shadow-xl backdrop-blur-md dark:border-slate-800/60 dark:bg-slate-900/70">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div className="space-y-3">
+                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-700 dark:border-emerald-400/40 dark:text-emerald-200">
+                  Career compass
+                </span>
+                <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 lg:text-5xl">
+                  A refined workspace for your job hunt
+                </h1>
+                <p className="max-w-2xl text-base text-slate-600 dark:text-slate-300">
+                  Capture every lead, monitor interview progress, and keep rich notes in a single, elegant command center designed for clarity and focus.
+                </p>
+              </div>
+              <div className="grid gap-1 text-right text-sm text-muted-foreground">
+                <span>Live sync</span>
+                <span>Domain-driven core · CQRS orchestration</span>
+              </div>
             </div>
-            <div className="grid gap-1 text-right text-sm text-muted-foreground">
-              <span>Live sync</span>
-              <span>Domain-driven core · CQRS orchestration</span>
-            </div>
-          </div>
-          <StatusOverview summary={statusSummary} />
-        </header>
+            <StatusOverview summary={statusSummary} />
+          </header>
 
-        <div className="grid gap-6 xl:grid-cols-[400px_1fr] xl:items-start">
-          <CreateApplicationCard
-            statuses={STATUS_OPTIONS}
-            onSubmit={async (values) => {
-              await createMutation.mutateAsync(values);
-            }}
-            isSubmitting={createMutation.isPending}
-            error={createMutation.error?.message}
-            successMessage={createSuccess}
-          />
-
-          <div className="space-y-6">
-            <ApplicationTable
-              data={applications}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              isLoading={applicationsQuery.isLoading || applicationsQuery.isFetching}
-            />
-
-            <ApplicationDetailsCard
-              application={selectedApplication}
+          <div className="grid gap-6 xl:grid-cols-[400px_1fr] xl:items-start">
+            <CreateApplicationCard
               statuses={STATUS_OPTIONS}
-              onUpdateStatus={(id, values) =>
-                updateStatusMutation.mutate({ id, values })
-              }
-              onAddComment={(id, values) =>
-                addCommentMutation.mutate({ id, values })
-              }
-              isUpdatingStatus={updateStatusMutation.isPending}
-              isAddingComment={addCommentMutation.isPending}
-              updateError={updateStatusMutation.error?.message}
-              commentError={addCommentMutation.error?.message}
-              updateSuccessMessage={statusSuccess}
-              commentSuccessMessage={commentSuccess}
+              onSubmit={async (values) => {
+                await createMutation.mutateAsync(values);
+              }}
+              isSubmitting={createMutation.isPending}
+              error={createMutation.error?.message}
+              successMessage={createSuccess}
             />
+
+            <div className="space-y-6">
+              <ApplicationTable
+                data={applications}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                isLoading={applicationsQuery.isLoading || applicationsQuery.isFetching}
+              />
+
+              <ApplicationDetailsCard
+                application={selectedApplication}
+                statuses={STATUS_OPTIONS}
+                onUpdateStatus={(id, values) =>
+                  updateStatusMutation.mutate({ id, values })
+                }
+                onAddComment={(id, values) =>
+                  addCommentMutation.mutate({ id, values })
+                }
+                isUpdatingStatus={updateStatusMutation.isPending}
+                isAddingComment={addCommentMutation.isPending}
+                updateError={updateStatusMutation.error?.message}
+                commentError={addCommentMutation.error?.message}
+                updateSuccessMessage={statusSuccess}
+                commentSuccessMessage={commentSuccess}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </SignedIn>
     </div>
   );
 }

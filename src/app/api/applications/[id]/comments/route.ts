@@ -4,12 +4,17 @@ import { NextResponse } from "next/server";
 import { applicationModule } from "@/infrastructure/container";
 import { addApplicationCommentSchema } from "@/lib/validation/applicationSchemas";
 import { serializeApplication } from "../../serializer";
+import { isAuthenticated } from "@/lib/auth/isAuthenticated";
 
 export async function POST(
   request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
+    if (!isAuthenticated()) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = addApplicationCommentSchema.parse(await request.json());
 
     await applicationModule.commands.addComment.execute({

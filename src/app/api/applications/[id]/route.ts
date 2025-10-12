@@ -3,12 +3,17 @@ import { NextResponse } from "next/server";
 import { applicationModule } from "@/infrastructure/container";
 import { updateApplicationStatusSchema } from "@/lib/validation/applicationSchemas";
 import { serializeApplication } from "../serializer";
+import { isAuthenticated } from "@/lib/auth/isAuthenticated";
 
 export async function GET(
   _request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
+    if (!isAuthenticated()) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const application =
       await applicationModule.queries.getApplicationById.execute(params.id);
 
@@ -32,6 +37,10 @@ export async function PATCH(
   { params }: { params: { id: string } },
 ) {
   try {
+    if (!isAuthenticated()) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = updateApplicationStatusSchema.parse(await request.json());
 
     await applicationModule.commands.updateStatus.execute({

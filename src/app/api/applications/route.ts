@@ -4,9 +4,14 @@ import { NextResponse } from "next/server";
 import { applicationModule } from "@/infrastructure/container";
 import { createApplicationInputSchema } from "@/lib/validation/applicationSchemas";
 import { serializeApplication } from "./serializer";
+import { isAuthenticated } from "@/lib/auth/isAuthenticated";
 
 export async function GET() {
   try {
+    if (!isAuthenticated()) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const applications =
       await applicationModule.queries.listApplications.execute();
 
@@ -23,6 +28,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    if (!isAuthenticated()) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const payload = createApplicationInputSchema.parse(await request.json());
 
     const application = await applicationModule.commands.createApplication.execute(
