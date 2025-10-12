@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -146,18 +147,60 @@ export function ApplicationsPage() {
   return (
     <div className="relative isolate">
       <SignedOut>
-        <div className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center gap-6 px-4 text-center">
-          <h1 className="text-4xl font-semibold text-slate-900 dark:text-slate-100">
-            Sign in to access your job application workspace
-          </h1>
-          <p className="text-base text-slate-600 dark:text-slate-300">
-            Authenticate to create new opportunities, track interview progress, and keep notes synchronized securely.
-          </p>
-          <SignInButton mode="modal">
-            <button className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/30 transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900">
-              Sign in
-            </button>
-          </SignInButton>
+        <div className="mx-auto flex min-h-[80vh] max-w-5xl flex-col items-center justify-center gap-12 px-4 text-center lg:flex-row lg:text-left">
+          {/* Left Column: Text Content */}
+          <div className="lg:w-1/2">
+            <h1 className="text-5xl font-bold text-slate-900 dark:text-slate-100">
+              Focus on What Matters: Your Next Career Move
+            </h1>
+            <p className="mt-6 text-lg text-slate-600 dark:text-slate-300">
+              JobHaunt is a beautifully simple, minimalist tool designed for one thing: to help you manage your job applications without the noise. Track your progress, keep notes, and stay organized, effortlessly.
+            </p>
+            <div className="mt-8 flex justify-center lg:justify-start">
+              <SignInButton mode="modal">
+                <button className="rounded-full bg-slate-900 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-slate-900/30 transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900">
+                  Get Started for Free
+                </button>
+              </SignInButton>
+            </div>
+          </div>
+
+          {/* Right Column: Visual Element */}
+          <div className="lg:w-1/2">
+            <div className="relative rounded-3xl border border-slate-200/80 bg-white/60 p-8 shadow-xl backdrop-blur-lg dark:border-slate-800/60 dark:bg-slate-900/60">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">Your Application Pipeline</span>
+                <div className="flex gap-2">
+                  <div className="h-3 w-3 rounded-full bg-red-400"></div>
+                  <div className="h-3 w-3 rounded-full bg-yellow-400"></div>
+                  <div className="h-3 w-3 rounded-full bg-green-400"></div>
+                </div>
+              </div>
+              <div className="mt-6 space-y-4">
+                <div className="flex items-center gap-4 rounded-lg bg-slate-100/80 p-4 dark:bg-slate-800/80">
+                  <Image src="/file.svg" alt="File Icon" className="h-6 w-6" width={24} height={24} />
+                  <div className="flex-grow">
+                    <p className="font-medium text-slate-800 dark:text-slate-200">Software Engineer at Acme Inc.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Status: CV Sent</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 rounded-lg bg-slate-100/80 p-4 dark:bg-slate-800/80">
+                  <Image src="/globe.svg" alt="Globe Icon" className="h-6 w-6" width={24} height={24} />
+                  <div className="flex-grow">
+                    <p className="font-medium text-slate-800 dark:text-slate-200">Product Manager at Globex Corp.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Status: First Interview</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 rounded-lg bg-slate-100/80 p-4 dark:bg-slate-800/80">
+                  <Image src="/window.svg" alt="Window Icon" className="h-6 w-6" width={24} height={24} />
+                  <div className="flex-grow">
+                    <p className="font-medium text-slate-800 dark:text-slate-200">UX Designer at Initech</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Status: Offer</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </SignedOut>
 
