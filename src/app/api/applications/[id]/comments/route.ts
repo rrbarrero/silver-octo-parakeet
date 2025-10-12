@@ -37,10 +37,6 @@ export async function POST(
     return NextResponse.json(serializeApplication(updated), { status: 200 });
   } catch (error) {
     const { status, body } = formatErrorResponse(error);
-    if (process.env.NODE_ENV === "development") {
-      console.error("[applications/:id/comments.POST]", body);
-    }
-
     return NextResponse.json(body, { status });
   }
 }

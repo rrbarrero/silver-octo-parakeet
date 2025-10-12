@@ -27,10 +27,6 @@ export async function GET(
     });
   } catch (error) {
     const { status, body } = formatErrorResponse(error);
-    if (process.env.NODE_ENV === "development") {
-      console.error("[applications/:id.GET]", body);
-    }
-
     return NextResponse.json(body, { status });
   }
 }
@@ -62,10 +58,6 @@ export async function PATCH(
     return NextResponse.json(serializeApplication(updated), { status: 200 });
   } catch (error) {
     const { status, body } = formatErrorResponse(error);
-    if (process.env.NODE_ENV === "development") {
-      console.error("[applications/:id.PATCH]", body);
-    }
-
     return NextResponse.json(body, { status });
   }
 }

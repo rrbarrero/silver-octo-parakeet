@@ -23,9 +23,7 @@ export function formatErrorResponse(error: unknown) {
     };
   }
 
-  if (isDev) {
-    console.error("[UnhandledError]", error);
-  }
+  // No console noise in dev/prod; return structured payload only
 
   return {
     status: 500,
