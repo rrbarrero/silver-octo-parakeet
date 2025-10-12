@@ -15,9 +15,12 @@ model JobApplication {
   url             String?
   appliedAt       DateTime
   status          String
+  ownerId         String
   comments        ApplicationComment[]
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
+
+  @@index([ownerId, appliedAt])
 }
 
 model ApplicationComment {

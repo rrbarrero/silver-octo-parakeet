@@ -29,6 +29,7 @@ export async function fetchApplications(): Promise<ApplicationDTO[]> {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -45,6 +46,7 @@ export async function createApplication(data: unknown): Promise<ApplicationDTO> 
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(payload),
   });
 
@@ -62,6 +64,7 @@ export async function updateApplicationStatus(
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(payload),
   });
 
@@ -79,6 +82,7 @@ export async function addApplicationComment(
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(payload),
   });
 

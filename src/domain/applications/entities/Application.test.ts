@@ -19,6 +19,7 @@ describe("JobApplication entity", () => {
       appliedAt: baseDate,
       url: "https://careers.acme.com/frontend",
       status: "cv_sent",
+      ownerId: "user-123",
     });
 
     expect(application).toMatchObject({
@@ -30,6 +31,7 @@ describe("JobApplication entity", () => {
       appliedAt: baseDate,
       status: "cv_sent",
       comments: [],
+      ownerId: "user-123",
     });
   });
 
@@ -39,9 +41,10 @@ describe("JobApplication entity", () => {
         id: "app-invalid",
         companyName: " ",
         roleTitle: "Engineer",
-        appliedAt: baseDate,
-        status: "cv_sent",
-      }),
+      appliedAt: baseDate,
+      status: "cv_sent",
+      ownerId: "user-123",
+    }),
     ).toThrow("Company name cannot be empty");
 
     expect(() =>
@@ -49,9 +52,10 @@ describe("JobApplication entity", () => {
         id: "app-invalid",
         companyName: "Acme",
         roleTitle: " ",
-        appliedAt: baseDate,
-        status: "cv_sent",
-      }),
+      appliedAt: baseDate,
+      status: "cv_sent",
+      ownerId: "user-123",
+    }),
     ).toThrow("Role title cannot be empty");
 
     expect(() =>
@@ -61,6 +65,7 @@ describe("JobApplication entity", () => {
         roleTitle: "Engineer",
       appliedAt: new Date("invalid"),
       status: "cv_sent",
+      ownerId: "user-123",
     }),
     ).toThrow("Applied date must be a valid date");
 
@@ -70,9 +75,10 @@ describe("JobApplication entity", () => {
         companyName: "Acme",
         roleTitle: "Engineer",
         appliedAt: baseDate,
-        status: "cv_sent",
-        url: "ftp://example.com",
-      }),
+      status: "cv_sent",
+      url: "ftp://example.com",
+      ownerId: "user-123",
+    }),
     ).toThrow("Provided job posting URL is invalid");
 
     expect(() =>
@@ -81,10 +87,22 @@ describe("JobApplication entity", () => {
         companyName: "Acme",
         roleTitle: "Engineer",
         appliedAt: baseDate,
-        status: "cv_sent",
-        url: "not-a-url",
-      }),
+      status: "cv_sent",
+      url: "not-a-url",
+      ownerId: "user-123",
+    }),
     ).toThrow("Provided job posting URL is invalid");
+
+    expect(() =>
+      createApplication({
+        id: "app-invalid-owner",
+        companyName: "Acme",
+        roleTitle: "Engineer",
+        appliedAt: baseDate,
+        status: "cv_sent",
+        ownerId: " ",
+      }),
+    ).toThrow("Owner id cannot be empty");
   });
 
   it("updates the status only when it changes", () => {
@@ -94,6 +112,7 @@ describe("JobApplication entity", () => {
       roleTitle: "Engineer",
       appliedAt: baseDate,
       status: "cv_sent",
+      ownerId: "user-status",
     });
 
     const sameStatusResult = updateStatus(application, "cv_sent");
@@ -111,6 +130,7 @@ describe("JobApplication entity", () => {
       roleTitle: "Engineer",
       appliedAt: baseDate,
       status: "cv_sent",
+      ownerId: "user-comments",
     });
 
     const comment = createComment({

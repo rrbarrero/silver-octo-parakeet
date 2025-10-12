@@ -15,10 +15,11 @@ describe("InMemoryApplicationRepository", () => {
       appliedAt: baseDate,
       url: "https://umbrella.jobs/backend",
       status: "cv_sent",
+      ownerId: "user-1",
     });
 
     await repository.save(application);
-    const stored = await repository.findById("repo-1");
+    const stored = await repository.findById("repo-1", "user-1");
 
     expect(stored).toEqual(application);
   });
@@ -32,11 +33,12 @@ describe("InMemoryApplicationRepository", () => {
       appliedAt: baseDate,
       url: "https://cyberdyne.ai/careers",
       status: "cv_sent",
+      ownerId: "user-immutable",
     });
 
     await repository.save(application);
 
-    const fetched = await repository.findById("repo-immutable");
+    const fetched = await repository.findById("repo-immutable", "user-immutable");
     if (!fetched) {
       throw new Error("Expected application to be stored");
     }
@@ -49,7 +51,7 @@ describe("InMemoryApplicationRepository", () => {
       createdAt: new Date(baseDate),
     });
 
-    const afterTamper = await repository.findById("repo-immutable");
+    const afterTamper = await repository.findById("repo-immutable", "user-immutable");
     expect(afterTamper?.companyName).toBe("Cyberdyne");
     expect(afterTamper?.comments).toHaveLength(0);
   });
@@ -65,6 +67,7 @@ describe("InMemoryApplicationRepository", () => {
         appliedAt: new Date("2024-01-01T00:00:00Z"),
         url: "https://acme.com/jobs/eng",
         status: "cv_sent",
+        ownerId: "user-list",
       }),
     );
     await repository.save(
@@ -75,10 +78,11 @@ describe("InMemoryApplicationRepository", () => {
         appliedAt: new Date("2024-02-01T00:00:00Z"),
         url: "https://globex.com/jobs/eng",
         status: "cv_sent",
+        ownerId: "user-list",
       }),
     );
 
-    const list = await repository.list();
+    const list = await repository.listByOwner("user-list");
     expect(list.map((app) => app.id)).toEqual(["repo-a", "repo-b"]);
   });
 });

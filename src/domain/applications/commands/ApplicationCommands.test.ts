@@ -13,6 +13,7 @@ describe("Application command handlers", () => {
   it("creates an application and persists it", async () => {
     const repository = new InMemoryApplicationRepository();
     const handler = new CreateApplicationCommandHandler(repository);
+    const ownerId = "user-command";
 
     const application = await handler.execute({
       id: "command-create",
@@ -21,9 +22,10 @@ describe("Application command handlers", () => {
       url: "https://jobs.acme.com/frontend",
       appliedAt: baseDate,
       status: "cv_sent",
+      ownerId,
     });
 
-    const stored = await repository.findById("command-create");
+    const stored = await repository.findById("command-create", ownerId);
     expect(stored).toEqual(application);
   });
 
@@ -31,6 +33,7 @@ describe("Application command handlers", () => {
     const repository = new InMemoryApplicationRepository();
     const createHandler = new CreateApplicationCommandHandler(repository);
     const updateHandler = new UpdateApplicationStatusCommandHandler(repository);
+    const ownerId = "user-update";
 
     await createHandler.execute({
       id: "command-update",
@@ -39,14 +42,16 @@ describe("Application command handlers", () => {
       url: "https://globex.com/jobs/123",
       appliedAt: baseDate,
       status: "cv_sent",
+      ownerId,
     });
 
     await updateHandler.execute({
       id: "command-update",
       status: "technical_interview",
+      ownerId,
     });
 
-    const updated = await repository.findById("command-update");
+    const updated = await repository.findById("command-update", ownerId);
     expect(updated?.status).toBe("technical_interview");
   });
 
@@ -54,6 +59,7 @@ describe("Application command handlers", () => {
     const repository = new InMemoryApplicationRepository();
     const createHandler = new CreateApplicationCommandHandler(repository);
     const addCommentHandler = new AddCommentCommandHandler(repository);
+    const ownerId = "user-comment";
 
     await createHandler.execute({
       id: "command-comment",
@@ -62,6 +68,7 @@ describe("Application command handlers", () => {
       url: "https://initech.com/careers/qa",
       appliedAt: baseDate,
       status: "cv_sent",
+      ownerId,
     });
 
     await addCommentHandler.execute({
@@ -71,9 +78,10 @@ describe("Application command handlers", () => {
         message: "Received invite for screening task",
         createdAt: new Date("2024-02-05T12:00:00Z"),
       },
+      ownerId,
     });
 
-    const application = await repository.findById("command-comment");
+    const application = await repository.findById("command-comment", ownerId);
     expect(application?.comments).toHaveLength(1);
     expect(application?.comments[0].message).toBe(
       "Received invite for screening task",

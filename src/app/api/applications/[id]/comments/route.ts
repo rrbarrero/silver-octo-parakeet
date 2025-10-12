@@ -4,17 +4,15 @@ import { NextResponse } from "next/server";
 import { applicationModule } from "@/infrastructure/container";
 import { addApplicationCommentSchema } from "@/lib/validation/applicationSchemas";
 import { serializeApplication } from "../../serializer";
-import { isAuthenticated } from "@/lib/auth/isAuthenticated";
+import { requireUserId } from "@/lib/auth/isAuthenticated";
+import { formatErrorResponse } from "@/lib/errors/formatErrorResponse";
 
 export async function POST(
   request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
-    if (!isAuthenticated()) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const ownerId = requireUserId(request);
     const body = addApplicationCommentSchema.parse(await request.json());
 
     await applicationModule.commands.addComment.execute({
@@ -23,10 +21,14 @@ export async function POST(
         id: randomUUID(),
         message: body.comment,
       },
+      ownerId,
     });
 
     const updated =
-      await applicationModule.queries.getApplicationById.execute(params.id);
+      await applicationModule.queries.getApplicationById.execute(
+        params.id,
+        ownerId,
+      );
 
     if (!updated) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -34,8 +36,11 @@ export async function POST(
 
     return NextResponse.json(serializeApplication(updated), { status: 200 });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unexpected error";
-    return NextResponse.json({ error: message }, { status: 400 });
+    const { status, body } = formatErrorResponse(error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("[applications/:id/comments.POST]", body);
+    }
+
+    return NextResponse.json(body, { status });
   }
 }

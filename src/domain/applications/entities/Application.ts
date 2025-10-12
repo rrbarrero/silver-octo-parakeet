@@ -14,6 +14,7 @@ export interface JobApplication {
   readonly appliedAt: Date;
   readonly status: ApplicationStatus;
   readonly comments: ApplicationComment[];
+  readonly ownerId: string;
 }
 
 export function createApplication(params: {
@@ -25,10 +26,15 @@ export function createApplication(params: {
   appliedAt: Date;
   status: ApplicationStatus;
   comments?: ApplicationComment[];
+  ownerId: string;
 }): JobApplication {
   validateCoreFields(params.companyName, params.roleTitle, params.appliedAt);
   assertValidApplicationStatus(params.status);
   const url = normalizeUrl(params.url);
+  const ownerId = params.ownerId.trim();
+  if (!ownerId) {
+    throw new Error("Owner id cannot be empty");
+  }
 
   return {
     id: params.id,
@@ -39,6 +45,7 @@ export function createApplication(params: {
     appliedAt: params.appliedAt,
     status: params.status,
     comments: params.comments ?? [],
+    ownerId,
   };
 }
 

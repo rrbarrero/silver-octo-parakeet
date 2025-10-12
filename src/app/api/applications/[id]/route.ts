@@ -3,19 +3,20 @@ import { NextResponse } from "next/server";
 import { applicationModule } from "@/infrastructure/container";
 import { updateApplicationStatusSchema } from "@/lib/validation/applicationSchemas";
 import { serializeApplication } from "../serializer";
-import { isAuthenticated } from "@/lib/auth/isAuthenticated";
+import { requireUserId } from "@/lib/auth/isAuthenticated";
+import { formatErrorResponse } from "@/lib/errors/formatErrorResponse";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
-    if (!isAuthenticated()) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const ownerId = requireUserId(request);
     const application =
-      await applicationModule.queries.getApplicationById.execute(params.id);
+      await applicationModule.queries.getApplicationById.execute(
+        params.id,
+        ownerId,
+      );
 
     if (!application) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -25,10 +26,12 @@ export async function GET(
       status: 200,
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unexpected error" },
-      { status: 500 },
-    );
+    const { status, body } = formatErrorResponse(error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("[applications/:id.GET]", body);
+    }
+
+    return NextResponse.json(body, { status });
   }
 }
 
@@ -37,19 +40,20 @@ export async function PATCH(
   { params }: { params: { id: string } },
 ) {
   try {
-    if (!isAuthenticated()) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const ownerId = requireUserId(request);
     const body = updateApplicationStatusSchema.parse(await request.json());
 
     await applicationModule.commands.updateStatus.execute({
       id: params.id,
       status: body.status,
+      ownerId,
     });
 
     const updated =
-      await applicationModule.queries.getApplicationById.execute(params.id);
+      await applicationModule.queries.getApplicationById.execute(
+        params.id,
+        ownerId,
+      );
 
     if (!updated) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -57,8 +61,11 @@ export async function PATCH(
 
     return NextResponse.json(serializeApplication(updated), { status: 200 });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unexpected error";
-    return NextResponse.json({ error: message }, { status: 400 });
+    const { status, body } = formatErrorResponse(error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("[applications/:id.PATCH]", body);
+    }
+
+    return NextResponse.json(body, { status });
   }
 }

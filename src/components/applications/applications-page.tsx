@@ -1,6 +1,6 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -30,10 +30,12 @@ export function ApplicationsPage() {
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
   const [statusSuccess, setStatusSuccess] = useState<string | null>(null);
   const [commentSuccess, setCommentSuccess] = useState<string | null>(null);
+  const { isSignedIn, isLoaded } = useAuth();
 
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
     queryFn: fetchApplications,
+    enabled: isLoaded && isSignedIn,
   });
 
   const createMutation = useMutation({

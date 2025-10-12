@@ -14,6 +14,7 @@ export interface CreateApplicationCommand {
   readonly url?: string;
   readonly appliedAt: Date;
   readonly status: ApplicationStatus;
+  readonly ownerId: string;
   readonly initialComment?: {
     id: string;
     message: string;
@@ -44,6 +45,7 @@ export class CreateApplicationCommandHandler {
       appliedAt: command.appliedAt,
       status: command.status,
       comments,
+      ownerId: command.ownerId,
     });
 
     await this.repository.save(application);

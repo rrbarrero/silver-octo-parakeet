@@ -12,6 +12,7 @@ function toPersistence(application: JobApplication) {
     url: application.url,
     appliedAt: application.appliedAt,
     status: application.status,
+    ownerId: application.ownerId,
   };
 }
 
@@ -24,6 +25,7 @@ function toDomain(payload: {
   appliedAt: Date;
   status: string;
   comments: { id: string; message: string; createdAt: Date }[];
+  ownerId: string;
 }): JobApplication {
   return {
     id: payload.id,
@@ -41,6 +43,7 @@ function toDomain(payload: {
         message: comment.message,
         createdAt: comment.createdAt,
       })),
+    ownerId: payload.ownerId,
   };
 }
 
@@ -75,8 +78,8 @@ export class PrismaApplicationRepository implements ApplicationRepository {
 
   async update(application: JobApplication): Promise<void> {
     try {
-      await this.prisma.jobApplication.update({
-        where: { id: application.id },
+      const result = await this.prisma.jobApplication.updateMany({
+        where: { id: application.id, ownerId: application.ownerId },
         data: {
           ...toPersistence(application),
           comments: {
@@ -89,6 +92,9 @@ export class PrismaApplicationRepository implements ApplicationRepository {
           },
         },
       });
+      if (result.count === 0) {
+        throw new Error(`Application ${application.id} does not exist`);
+      }
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -101,9 +107,9 @@ export class PrismaApplicationRepository implements ApplicationRepository {
     }
   }
 
-  async findById(id: string): Promise<JobApplication | null> {
-    const application = await this.prisma.jobApplication.findUnique({
-      where: { id },
+  async findById(id: string, ownerId: string): Promise<JobApplication | null> {
+    const application = await this.prisma.jobApplication.findFirst({
+      where: { id, ownerId },
       include: { comments: { orderBy: { createdAt: "asc" } } },
     });
 
@@ -114,8 +120,9 @@ export class PrismaApplicationRepository implements ApplicationRepository {
     return toDomain(application);
   }
 
-  async list(): Promise<JobApplication[]> {
+  async listByOwner(ownerId: string): Promise<JobApplication[]> {
     const applications = await this.prisma.jobApplication.findMany({
+      where: { ownerId },
       include: { comments: { orderBy: { createdAt: "asc" } } },
       orderBy: { appliedAt: "desc" },
     });
@@ -123,19 +130,8 @@ export class PrismaApplicationRepository implements ApplicationRepository {
     return applications.map(toDomain);
   }
 
-  async delete(id: string): Promise<void> {
-    try {
-      await this.prisma.jobApplication.delete({ where: { id } });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2025"
-      ) {
-        return;
-      }
-
-      throw error;
-    }
+  async delete(id: string, ownerId: string): Promise<void> {
+    await this.prisma.jobApplication.deleteMany({ where: { id, ownerId } });
   }
 
   async clear(): Promise<void> {

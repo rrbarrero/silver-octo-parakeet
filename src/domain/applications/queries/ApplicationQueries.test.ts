@@ -11,6 +11,7 @@ describe("Application query handlers", () => {
   it("lists applications ordered by applied date descending", async () => {
     const repository = new InMemoryApplicationRepository();
     const queryHandler = new ListApplicationsQueryHandler(repository);
+    const ownerId = "user-query";
 
     await repository.save(
       createApplication({
@@ -20,6 +21,7 @@ describe("Application query handlers", () => {
         appliedAt: new Date("2024-01-10T00:00:00Z"),
         url: "https://acme.com/jobs/1",
         status: "cv_sent",
+        ownerId,
       }),
     );
 
@@ -31,10 +33,11 @@ describe("Application query handlers", () => {
         appliedAt: new Date("2024-03-05T00:00:00Z"),
         url: "https://globex.com/jobs/2",
         status: "cv_sent",
+        ownerId,
       }),
     );
 
-    const list = await queryHandler.execute();
+    const list = await queryHandler.execute(ownerId);
     expect(list.map((app) => app.id)).toEqual(["query-2", "query-1"]);
   });
 
@@ -42,7 +45,7 @@ describe("Application query handlers", () => {
     const repository = new InMemoryApplicationRepository();
     const queryHandler = new GetApplicationByIdQueryHandler(repository);
 
-    const result = await queryHandler.execute("missing");
+    const result = await queryHandler.execute("missing", "user-query");
     expect(result).toBeNull();
   });
 });

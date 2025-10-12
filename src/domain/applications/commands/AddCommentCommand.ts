@@ -8,13 +8,17 @@ export interface AddCommentCommand {
     message: string;
     createdAt?: Date;
   };
+  readonly ownerId: string;
 }
 
 export class AddCommentCommandHandler {
   constructor(private readonly repository: ApplicationRepository) {}
 
   async execute(command: AddCommentCommand): Promise<void> {
-    const existing = await this.repository.findById(command.id);
+    const existing = await this.repository.findById(
+      command.id,
+      command.ownerId,
+    );
 
     if (!existing) {
       throw new Error(`Application ${command.id} not found`);

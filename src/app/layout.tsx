@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";

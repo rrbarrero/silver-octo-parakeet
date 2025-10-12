@@ -1,11 +1,13 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+const middlewareConfig = process.env.NODE_ENV === "test" ? {} : { publicRoutes: ["/"] };
+
+export default clerkMiddleware(middlewareConfig);
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Run middleware on all routes except static files and _next
+    '/((?!.+\\.[\\w]+$|_next).*)',
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],

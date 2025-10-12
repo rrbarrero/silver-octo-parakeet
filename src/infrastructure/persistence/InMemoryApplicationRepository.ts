@@ -20,16 +20,27 @@ export class InMemoryApplicationRepository implements ApplicationRepository {
     this.store.set(application.id, clone(application));
   }
 
-  async findById(id: string): Promise<JobApplication | null> {
+  async findById(id: string, ownerId: string): Promise<JobApplication | null> {
     const application = this.store.get(id);
-    return application ? clone(application) : null;
+    if (!application || application.ownerId !== ownerId) {
+      return null;
+    }
+
+    return clone(application);
   }
 
-  async list(): Promise<JobApplication[]> {
-    return Array.from(this.store.values(), clone);
+  async listByOwner(ownerId: string): Promise<JobApplication[]> {
+    return Array.from(this.store.values())
+      .filter((application) => application.ownerId === ownerId)
+      .map(clone);
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, ownerId: string): Promise<void> {
+    const existing = this.store.get(id);
+    if (!existing || existing.ownerId !== ownerId) {
+      return;
+    }
+
     this.store.delete(id);
   }
 

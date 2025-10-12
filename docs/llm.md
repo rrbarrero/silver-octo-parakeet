@@ -11,7 +11,7 @@
 - **Testing**: Vitest covers units (domain + infrastructure) and integration (API handlers).
 
 ## Domain Model
-- `JobApplication` aggregate captures company, role, optional description, posting URL, applied date, status, and comments.
+- `JobApplication` aggregate captures company, role, optional description, posting URL, applied date, status, comments, and `ownerId` to scope data per Clerk user.
 - Status is constrained by the `ApplicationStatus` value object (`APPLICATION_STATUSES`).
 - Command handlers (create, update status, add comment) and query handlers (list, get by id) enforce CQRS boundaries.
 - Repository contract defines persistence operations; currently fulfilled by `InMemoryApplicationRepository` which clones data defensively.
@@ -53,5 +53,6 @@
 1. When adding or modifying features, update domain logic first, then adjust API handlers and client consumers.
 2. Use shared validation schemas for any new payload shape.
 3. Update tests alongside code changes; expand integration tests for new endpoints or workflows.
-4. After every change or feature addition, run both `npm run lint` and `npm run test`.
-5. Remember to maintain Tailwind tokens and shadcn components when introducing new UI elements.
+4. Always check the official documentation (matching the version we depend on) before introducing or modifying anything related to an external library.
+5. After every change or feature addition, run both `npm run lint` and `npm run test`.
+6. Remember to maintain Tailwind tokens and shadcn components when introducing new UI elements.
