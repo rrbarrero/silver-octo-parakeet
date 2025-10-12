@@ -103,7 +103,7 @@ function normalizeUrl(url: string | undefined): string | undefined {
     }
 
     return parsed.toString();
-  } catch (error) {
+  } catch {
     throw new Error("Provided job posting URL is invalid");
   }
 }

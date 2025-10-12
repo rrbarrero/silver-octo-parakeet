@@ -26,6 +26,9 @@ const STATUS_OPTIONS: ApplicationStatus[] = ApplicationStatusEnum.options;
 export function ApplicationsPage() {
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [createSuccess, setCreateSuccess] = useState<string | null>(null);
+  const [statusSuccess, setStatusSuccess] = useState<string | null>(null);
+  const [commentSuccess, setCommentSuccess] = useState<string | null>(null);
 
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
@@ -34,6 +37,9 @@ export function ApplicationsPage() {
 
   const createMutation = useMutation({
     mutationFn: (input: CreateApplicationInput) => createApplication(input),
+    onMutate: () => {
+      setCreateSuccess(null);
+    },
     onSuccess: (created) => {
       queryClient.setQueryData<ApplicationDTO[] | undefined>(
         ["applications"],
@@ -47,6 +53,10 @@ export function ApplicationsPage() {
         },
       );
       setSelectedId(created.id);
+      setCreateSuccess("Application saved successfully.");
+    },
+    onError: () => {
+      setCreateSuccess(null);
     },
   });
 
@@ -58,6 +68,9 @@ export function ApplicationsPage() {
       id: string;
       values: UpdateApplicationStatusInput;
     }) => updateApplicationStatus(id, values),
+    onMutate: () => {
+      setStatusSuccess(null);
+    },
     onSuccess: (updated) => {
       queryClient.setQueryData<ApplicationDTO[] | undefined>(
         ["applications"],
@@ -69,6 +82,10 @@ export function ApplicationsPage() {
           return previous.map((app) => (app.id === updated.id ? updated : app));
         },
       );
+      setStatusSuccess("Status updated.");
+    },
+    onError: () => {
+      setStatusSuccess(null);
     },
   });
 
@@ -80,6 +97,9 @@ export function ApplicationsPage() {
       id: string;
       values: AddApplicationCommentInput;
     }) => addApplicationComment(id, values),
+    onMutate: () => {
+      setCommentSuccess(null);
+    },
     onSuccess: (updated) => {
       queryClient.setQueryData<ApplicationDTO[] | undefined>(
         ["applications"],
@@ -91,6 +111,10 @@ export function ApplicationsPage() {
           return previous.map((app) => (app.id === updated.id ? updated : app));
         },
       );
+      setCommentSuccess("Comment added.");
+    },
+    onError: () => {
+      setCommentSuccess(null);
     },
   });
 
@@ -110,6 +134,11 @@ export function ApplicationsPage() {
       setSelectedId(applications[0].id);
     }
   }, [applications, selectedId]);
+
+  useEffect(() => {
+    setStatusSuccess(null);
+    setCommentSuccess(null);
+  }, [selectedApplication?.id]);
 
   return (
     <div className="relative isolate">
@@ -144,6 +173,7 @@ export function ApplicationsPage() {
             }}
             isSubmitting={createMutation.isPending}
             error={createMutation.error?.message}
+            successMessage={createSuccess}
           />
 
           <div className="space-y-6">
@@ -167,6 +197,8 @@ export function ApplicationsPage() {
               isAddingComment={addCommentMutation.isPending}
               updateError={updateStatusMutation.error?.message}
               commentError={addCommentMutation.error?.message}
+              updateSuccessMessage={statusSuccess}
+              commentSuccessMessage={commentSuccess}
             />
           </div>
         </div>

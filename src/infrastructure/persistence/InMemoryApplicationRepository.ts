@@ -33,7 +33,7 @@ export class InMemoryApplicationRepository implements ApplicationRepository {
     this.store.delete(id);
   }
 
-  clear(): void {
+  async clear(): Promise<void> {
     this.store.clear();
   }
 }

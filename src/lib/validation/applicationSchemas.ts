@@ -34,7 +34,7 @@ export const createApplicationInputSchema = z.object({
   roleTitle: z.string().min(1, "Role title is required"),
   roleDescription: z
     .string()
-    .max(500, "Role description should be shorter than 500 characters")
+    .max(1200, "Role description should be shorter than 1200 characters")
     .optional()
     .transform((value) => (value?.trim() ? value.trim() : undefined)),
   url: z

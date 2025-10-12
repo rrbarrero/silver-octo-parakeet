@@ -11,9 +11,9 @@ import { POST as addComment } from "@/app/api/applications/[id]/comments/route";
 const baseUrl = "http://localhost/api/applications";
 
 describe("Applications API routes", () => {
-  beforeEach(() => {
-    applicationModule.repository.clear();
-  });
+beforeEach(async () => {
+  await applicationModule.repository.clear();
+});
 
   it("creates an application and returns the created record", async () => {
     const response = await createApplication(

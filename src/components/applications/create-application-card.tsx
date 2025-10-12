@@ -40,6 +40,7 @@ interface CreateApplicationCardProps {
   onSubmit: (values: CreateApplicationInput) => Promise<void>;
   isSubmitting: boolean;
   error?: string | null;
+  successMessage?: string | null;
 }
 
 export function CreateApplicationCard({
@@ -47,6 +48,7 @@ export function CreateApplicationCard({
   onSubmit,
   isSubmitting,
   error,
+  successMessage,
 }: CreateApplicationCardProps) {
   const form = useForm<CreateApplicationInput>({
     resolver: zodResolver(createApplicationInputSchema),
@@ -81,7 +83,13 @@ export function CreateApplicationCard({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(async (values) => {
-              await onSubmit(values);
+              const normalizedUrl = normalizeUrlInput(values.url);
+              const payload: CreateApplicationInput = {
+                ...values,
+                url: normalizedUrl,
+              };
+
+              await onSubmit(payload);
               form.reset({
                 companyName: "",
                 roleTitle: "",
@@ -241,6 +249,12 @@ export function CreateApplicationCard({
               </p>
             ) : null}
 
+            {successMessage ? (
+              <p className="rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-sm font-semibold text-emerald-700 dark:border-emerald-300/40 dark:bg-emerald-300/10 dark:text-emerald-200">
+                {successMessage}
+              </p>
+            ) : null}
+
             <Button
               type="submit"
               disabled={isSubmitting}
@@ -266,4 +280,21 @@ function formatStatus(status: ApplicationStatus) {
   };
 
   return labels[status] ?? status;
+}
+
+function normalizeUrlInput(url: string | undefined): string | undefined {
+  if (!url) {
+    return undefined;
+  }
+
+  const trimmed = url.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
 }

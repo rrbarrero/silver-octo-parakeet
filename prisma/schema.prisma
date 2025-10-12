@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model JobApplication {
+  id              String               @id
+  companyName     String
+  roleTitle       String
+  roleDescription String?
+  url             String?
+  appliedAt       DateTime
+  status          String
+  comments        ApplicationComment[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+}
+
+model ApplicationComment {
+  id            String         @id
+  application   JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  applicationId String
+  message       String
+  createdAt     DateTime       @default(now())
+}

@@ -5,9 +5,17 @@ import {
   ListApplicationsQueryHandler,
   UpdateApplicationStatusCommandHandler,
 } from "@/domain/applications";
+import { ApplicationRepository } from "@/domain/applications";
 import { InMemoryApplicationRepository } from "./persistence/InMemoryApplicationRepository";
+import { PrismaApplicationRepository } from "./persistence/PrismaApplicationRepository";
+import { prisma } from "./prismaClient";
 
-const repository = new InMemoryApplicationRepository();
+const shouldUseInMemory =
+  process.env.NODE_ENV === "test" || !process.env.DATABASE_URL;
+
+const repository: ApplicationRepository = shouldUseInMemory
+  ? new InMemoryApplicationRepository()
+  : new PrismaApplicationRepository(prisma);
 
 const createApplicationHandler = new CreateApplicationCommandHandler(
   repository,

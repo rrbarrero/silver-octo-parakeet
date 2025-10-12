@@ -6,4 +6,5 @@ export interface ApplicationRepository {
   findById(id: string): Promise<JobApplication | null>;
   list(): Promise<JobApplication[]>;
   delete(id: string): Promise<void>;
+  clear(): Promise<void>;
 }

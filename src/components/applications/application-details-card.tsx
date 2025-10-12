@@ -48,6 +48,8 @@ interface ApplicationDetailsCardProps {
   isAddingComment: boolean;
   updateError?: string | null;
   commentError?: string | null;
+  updateSuccessMessage?: string | null;
+  commentSuccessMessage?: string | null;
 }
 
 export function ApplicationDetailsCard({
@@ -59,6 +61,8 @@ export function ApplicationDetailsCard({
   isAddingComment,
   updateError,
   commentError,
+  updateSuccessMessage,
+  commentSuccessMessage,
 }: ApplicationDetailsCardProps) {
   const statusForm = useForm<UpdateApplicationStatusInput>({
     resolver: zodResolver(updateApplicationStatusSchema),
@@ -217,6 +221,12 @@ export function ApplicationDetailsCard({
                 </p>
               ) : null}
 
+              {updateSuccessMessage ? (
+                <p className="rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-sm font-semibold text-emerald-700 dark:border-emerald-300/40 dark:bg-emerald-300/10 dark:text-emerald-200">
+                  {updateSuccessMessage}
+                </p>
+              ) : null}
+
               <Button
                 type="submit"
                 variant="secondary"
@@ -296,6 +306,12 @@ export function ApplicationDetailsCard({
               {commentError ? (
                 <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">
                   {commentError}
+                </p>
+              ) : null}
+
+              {commentSuccessMessage ? (
+                <p className="rounded-md border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-sm font-semibold text-emerald-700 dark:border-emerald-300/40 dark:bg-emerald-300/10 dark:text-emerald-200">
+                  {commentSuccessMessage}
                 </p>
               ) : null}
 
