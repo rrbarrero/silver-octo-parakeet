@@ -6,6 +6,7 @@ export function serializeApplication(application: JobApplication) {
     companyName: application.companyName,
     roleTitle: application.roleTitle,
     roleDescription: application.roleDescription ?? null,
+    url: application.url ?? null,
     appliedAt: application.appliedAt.toISOString(),
     status: application.status,
     comments: application.comments.map((comment) => ({

@@ -31,6 +31,7 @@ export async function POST(request: Request) {
         companyName: payload.companyName,
         roleTitle: payload.roleTitle,
         roleDescription: payload.roleDescription,
+        url: payload.url,
         appliedAt: new Date(`${payload.appliedAt}T00:00:00`),
         status: payload.status,
         initialComment: payload.initialComment

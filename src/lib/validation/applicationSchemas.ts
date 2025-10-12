@@ -18,6 +18,7 @@ export const applicationSchema = z.object({
   companyName: z.string(),
   roleTitle: z.string(),
   roleDescription: z.string().nullish().transform((value) => value ?? undefined),
+  url: z.string().nullish().transform((value) => value ?? undefined),
   appliedAt: z
     .string()
     .datetime()
@@ -36,6 +37,16 @@ export const createApplicationInputSchema = z.object({
     .max(500, "Role description should be shorter than 500 characters")
     .optional()
     .transform((value) => (value?.trim() ? value.trim() : undefined)),
+  url: z
+    .string()
+    .optional()
+    .transform((value) => (value?.trim() ? value.trim() : undefined))
+    .pipe(
+      z
+        .string()
+        .url("URL must be valid")
+        .optional(),
+    ),
   appliedAt: z
     .string()
     .min(1, "Applied date is required")

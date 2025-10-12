@@ -11,6 +11,7 @@ export interface CreateApplicationCommand {
   readonly companyName: string;
   readonly roleTitle: string;
   readonly roleDescription?: string;
+  readonly url?: string;
   readonly appliedAt: Date;
   readonly status: ApplicationStatus;
   readonly initialComment?: {
@@ -39,6 +40,7 @@ export class CreateApplicationCommandHandler {
       companyName: command.companyName,
       roleTitle: command.roleTitle,
       roleDescription: command.roleDescription,
+      url: command.url,
       appliedAt: command.appliedAt,
       status: command.status,
       comments,

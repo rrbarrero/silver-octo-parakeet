@@ -85,6 +85,24 @@ const columns: ColumnDef<ApplicationDTO>[] = [
     ),
   },
   {
+    accessorKey: "url",
+    header: "Posting",
+    cell: ({ row }) =>
+      row.original.url ? (
+        <a
+          href={row.original.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center rounded-full border border-slate-200/70 bg-white/90 px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700/60 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:border-slate-500"
+          onClick={(event) => event.stopPropagation()}
+        >
+          View ↗
+        </a>
+      ) : (
+        <span className="text-xs text-slate-400 dark:text-slate-600">—</span>
+      ),
+  },
+  {
     accessorKey: "comments",
     header: "Comments",
     cell: ({ row }) => (

@@ -18,6 +18,7 @@ describe("Application query handlers", () => {
         companyName: "Acme",
         roleTitle: "Engineer",
         appliedAt: new Date("2024-01-10T00:00:00Z"),
+        url: "https://acme.com/jobs/1",
         status: "cv_sent",
       }),
     );
@@ -28,6 +29,7 @@ describe("Application query handlers", () => {
         companyName: "Globex",
         roleTitle: "Engineer",
         appliedAt: new Date("2024-03-05T00:00:00Z"),
+        url: "https://globex.com/jobs/2",
         status: "cv_sent",
       }),
     );

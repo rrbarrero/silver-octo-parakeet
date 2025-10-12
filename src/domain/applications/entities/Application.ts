@@ -10,6 +10,7 @@ export interface JobApplication {
   readonly companyName: string;
   readonly roleTitle: string;
   readonly roleDescription?: string;
+  readonly url?: string;
   readonly appliedAt: Date;
   readonly status: ApplicationStatus;
   readonly comments: ApplicationComment[];
@@ -20,18 +21,21 @@ export function createApplication(params: {
   companyName: string;
   roleTitle: string;
   roleDescription?: string;
+  url?: string;
   appliedAt: Date;
   status: ApplicationStatus;
   comments?: ApplicationComment[];
 }): JobApplication {
   validateCoreFields(params.companyName, params.roleTitle, params.appliedAt);
   assertValidApplicationStatus(params.status);
+  const url = normalizeUrl(params.url);
 
   return {
     id: params.id,
     companyName: params.companyName.trim(),
     roleTitle: params.roleTitle.trim(),
     roleDescription: params.roleDescription?.trim(),
+    url,
     appliedAt: params.appliedAt,
     status: params.status,
     comments: params.comments ?? [],
@@ -79,5 +83,27 @@ function validateCoreFields(
 
   if (!(appliedAt instanceof Date) || Number.isNaN(appliedAt.getTime())) {
     throw new Error("Applied date must be a valid date");
+  }
+}
+
+function normalizeUrl(url: string | undefined): string | undefined {
+  if (!url) {
+    return undefined;
+  }
+
+  const trimmed = url.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+
+  try {
+    const parsed = new URL(trimmed);
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      throw new Error("URL must use http or https protocol");
+    }
+
+    return parsed.toString();
+  } catch (error) {
+    throw new Error("Provided job posting URL is invalid");
   }
 }

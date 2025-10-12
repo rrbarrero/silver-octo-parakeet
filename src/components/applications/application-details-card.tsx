@@ -117,6 +117,17 @@ export function ApplicationDetailsCard({
             <CardDescription className="text-base font-medium text-slate-700 dark:text-slate-200">
               {application.roleTitle}
             </CardDescription>
+            {application.url ? (
+              <Button
+                asChild
+                variant="ghost"
+                className="mt-2 h-auto w-fit rounded-full border border-white/50 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-slate-600 transition hover:bg-white/80 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300"
+              >
+                <a href={application.url} target="_blank" rel="noopener noreferrer">
+                  View posting ↗
+                </a>
+              </Button>
+            ) : null}
           </div>
           <div className="rounded-2xl border border-white/40 bg-white/60 px-4 py-3 text-right text-xs uppercase tracking-[0.28em] text-slate-500 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
             Applied on

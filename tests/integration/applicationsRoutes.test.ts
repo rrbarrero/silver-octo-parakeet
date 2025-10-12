@@ -25,6 +25,7 @@ describe("Applications API routes", () => {
           roleTitle: "Frontend Engineer",
           roleDescription: "Build modern UIs",
           appliedAt: "2024-04-10",
+          url: "https://acme.com/jobs/frontend",
           status: "cv_sent",
         }),
       }),
@@ -36,6 +37,7 @@ describe("Applications API routes", () => {
     expect(payload).toMatchObject({
       companyName: "Acme Corp",
       roleTitle: "Frontend Engineer",
+      url: "https://acme.com/jobs/frontend",
       status: "cv_sent",
     });
 
@@ -55,6 +57,7 @@ describe("Applications API routes", () => {
           companyName: "Globex",
           roleTitle: "Backend Engineer",
           appliedAt: "2024-04-01",
+          url: "https://globex.com/jobs/backend",
           status: "cv_sent",
         }),
       }),
@@ -85,6 +88,7 @@ describe("Applications API routes", () => {
           companyName: "Initech",
           roleTitle: "QA Analyst",
           appliedAt: "2024-05-01",
+          url: "https://initech.com/careers/qa",
           status: "cv_sent",
         }),
       }),

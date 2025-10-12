@@ -17,6 +17,7 @@ describe("JobApplication entity", () => {
       roleTitle: "  Frontend Engineer ",
       roleDescription: "  Build modern UIs ",
       appliedAt: baseDate,
+      url: "https://careers.acme.com/frontend",
       status: "cv_sent",
     });
 
@@ -25,6 +26,7 @@ describe("JobApplication entity", () => {
       companyName: "Acme Corp",
       roleTitle: "Frontend Engineer",
       roleDescription: "Build modern UIs",
+      url: "https://careers.acme.com/frontend",
       appliedAt: baseDate,
       status: "cv_sent",
       comments: [],
@@ -57,10 +59,32 @@ describe("JobApplication entity", () => {
         id: "app-invalid",
         companyName: "Acme",
         roleTitle: "Engineer",
-        appliedAt: new Date("invalid"),
-        status: "cv_sent",
-      }),
+      appliedAt: new Date("invalid"),
+      status: "cv_sent",
+    }),
     ).toThrow("Applied date must be a valid date");
+
+    expect(() =>
+      createApplication({
+        id: "app-invalid-url",
+        companyName: "Acme",
+        roleTitle: "Engineer",
+        appliedAt: baseDate,
+        status: "cv_sent",
+        url: "ftp://example.com",
+      }),
+    ).toThrow("Provided job posting URL is invalid");
+
+    expect(() =>
+      createApplication({
+        id: "app-invalid-url2",
+        companyName: "Acme",
+        roleTitle: "Engineer",
+        appliedAt: baseDate,
+        status: "cv_sent",
+        url: "not-a-url",
+      }),
+    ).toThrow("Provided job posting URL is invalid");
   });
 
   it("updates the status only when it changes", () => {

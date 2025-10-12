@@ -57,6 +57,7 @@ export function CreateApplicationCard({
       appliedAt: new Date().toISOString().slice(0, 10),
       status: statuses[0],
       initialComment: "",
+      url: "",
     },
   });
 
@@ -88,6 +89,7 @@ export function CreateApplicationCard({
                 appliedAt: new Date().toISOString().slice(0, 10),
                 status: statuses[0],
                 initialComment: "",
+                url: "",
               });
             })}
             className="space-y-5"
@@ -194,6 +196,25 @@ export function CreateApplicationCard({
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Job posting URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="url"
+                      placeholder="https://company.com/careers/role"
+                      className="border-white/40 bg-white/80 shadow-sm backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/60"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

@@ -13,6 +13,7 @@ describe("InMemoryApplicationRepository", () => {
       companyName: "Umbrella",
       roleTitle: "Backend Engineer",
       appliedAt: baseDate,
+      url: "https://umbrella.jobs/backend",
       status: "cv_sent",
     });
 
@@ -29,6 +30,7 @@ describe("InMemoryApplicationRepository", () => {
       companyName: "Cyberdyne",
       roleTitle: "AI Researcher",
       appliedAt: baseDate,
+      url: "https://cyberdyne.ai/careers",
       status: "cv_sent",
     });
 
@@ -61,6 +63,7 @@ describe("InMemoryApplicationRepository", () => {
         companyName: "Acme",
         roleTitle: "Engineer",
         appliedAt: new Date("2024-01-01T00:00:00Z"),
+        url: "https://acme.com/jobs/eng",
         status: "cv_sent",
       }),
     );
@@ -70,6 +73,7 @@ describe("InMemoryApplicationRepository", () => {
         companyName: "Globex",
         roleTitle: "Engineer",
         appliedAt: new Date("2024-02-01T00:00:00Z"),
+        url: "https://globex.com/jobs/eng",
         status: "cv_sent",
       }),
     );

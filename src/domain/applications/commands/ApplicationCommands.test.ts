@@ -18,6 +18,7 @@ describe("Application command handlers", () => {
       id: "command-create",
       companyName: "Acme",
       roleTitle: "Engineer",
+      url: "https://jobs.acme.com/frontend",
       appliedAt: baseDate,
       status: "cv_sent",
     });
@@ -35,6 +36,7 @@ describe("Application command handlers", () => {
       id: "command-update",
       companyName: "Globex",
       roleTitle: "Developer",
+      url: "https://globex.com/jobs/123",
       appliedAt: baseDate,
       status: "cv_sent",
     });
@@ -57,6 +59,7 @@ describe("Application command handlers", () => {
       id: "command-comment",
       companyName: "Initech",
       roleTitle: "QA Analyst",
+      url: "https://initech.com/careers/qa",
       appliedAt: baseDate,
       status: "cv_sent",
     });
