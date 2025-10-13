@@ -1,5 +1,6 @@
 "use client";
 
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Sparkles } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -50,7 +51,9 @@ export function CreateApplicationCard({
   error,
   successMessage,
 }: CreateApplicationCardProps) {
-  const form = useForm<CreateApplicationInput>({
+  type CreateApplicationFormValues = z.input<typeof createApplicationInputSchema>;
+
+  const form = useForm<CreateApplicationFormValues>({
     resolver: zodResolver(createApplicationInputSchema),
     defaultValues: {
       companyName: "",
@@ -85,7 +88,12 @@ export function CreateApplicationCard({
             onSubmit={form.handleSubmit(async (values) => {
               const normalizedUrl = normalizeUrlInput(values.url);
               const payload: CreateApplicationInput = {
-                ...values,
+                companyName: values.companyName,
+                roleTitle: values.roleTitle,
+                appliedAt: values.appliedAt,
+                status: values.status,
+                roleDescription: values.roleDescription ?? undefined,
+                initialComment: values.initialComment ?? undefined,
                 url: normalizedUrl,
               };
 

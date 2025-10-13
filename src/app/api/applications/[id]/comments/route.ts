@@ -9,14 +9,15 @@ import { formatErrorResponse } from "@/lib/errors/formatErrorResponse";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const ownerId = requireUserId(request);
+    const { id } = await params;
     const body = addApplicationCommentSchema.parse(await request.json());
 
     await applicationModule.commands.addComment.execute({
-      id: params.id,
+      id,
       comment: {
         id: randomUUID(),
         message: body.comment,
@@ -26,7 +27,7 @@ export async function POST(
 
     const updated =
       await applicationModule.queries.getApplicationById.execute(
-        params.id,
+        id,
         ownerId,
       );
 

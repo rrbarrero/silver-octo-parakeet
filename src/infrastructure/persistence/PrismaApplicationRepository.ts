@@ -2,6 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 
 import { ApplicationRepository } from "@/domain/applications/repositories/ApplicationRepository";
 import { JobApplication } from "@/domain/applications";
+import { assertValidApplicationStatus, ApplicationStatus } from "@/domain/applications";
 
 function toPersistence(application: JobApplication) {
   return {
@@ -27,6 +28,9 @@ function toDomain(payload: {
   comments: { id: string; message: string; createdAt: Date }[];
   ownerId: string;
 }): JobApplication {
+  // validate and coerce status to a known ApplicationStatus
+  assertValidApplicationStatus(payload.status);
+
   return {
     id: payload.id,
     companyName: payload.companyName,
@@ -34,7 +38,7 @@ function toDomain(payload: {
     roleDescription: payload.roleDescription ?? undefined,
     url: payload.url ?? undefined,
     appliedAt: payload.appliedAt,
-    status: payload.status,
+    status: payload.status as ApplicationStatus,
     comments: payload.comments
       .slice()
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
@@ -78,8 +82,21 @@ export class PrismaApplicationRepository implements ApplicationRepository {
 
   async update(application: JobApplication): Promise<void> {
     try {
-      const result = await this.prisma.jobApplication.updateMany({
-        where: { id: application.id, ownerId: application.ownerId },
+      const existing = await this.prisma.jobApplication.findUnique({
+        where: { id: application.id },
+        select: { ownerId: true },
+      });
+
+      if (!existing) {
+        throw new Error(`Application ${application.id} does not exist`);
+      }
+
+      if (existing.ownerId !== application.ownerId) {
+        throw new Error(`Application ${application.id} does not exist`);
+      }
+
+      await this.prisma.jobApplication.update({
+        where: { id: application.id },
         data: {
           ...toPersistence(application),
           comments: {
@@ -92,9 +109,6 @@ export class PrismaApplicationRepository implements ApplicationRepository {
           },
         },
       });
-      if (result.count === 0) {
-        throw new Error(`Application ${application.id} does not exist`);
-      }
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&

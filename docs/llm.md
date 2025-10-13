@@ -47,12 +47,12 @@
 ## Testing Strategy
 - Unit tests target domain logic (`src/domain/.../*.test.ts`) and infrastructure behind repository behavior.
 - Integration tests (`tests/integration/applicationsRoutes.test.ts`) exercise API route handlers end-to-end using the shared container.
-- Commands: `npm run lint` for static analysis, `npm run test` for Vitest.
+- Commands: `npm run check` (runs lint, typecheck, tests). You can also run individually: `npm run lint`, `npm run typecheck`, `npm run test`.
 
 ## Agent Workflow Tips
 1. When adding or modifying features, update domain logic first, then adjust API handlers and client consumers.
 2. Use shared validation schemas for any new payload shape.
 3. Update tests alongside code changes; expand integration tests for new endpoints or workflows.
 4. Always check the official documentation (matching the version we depend on) before introducing or modifying anything related to an external library.
-5. After every change or feature addition, run both `npm run lint` and `npm run test`.
+5. After every change or feature addition, run `npm run check` (runs lint, typecheck, and tests).
 6. Remember to maintain Tailwind tokens and shadcn components when introducing new UI elements.

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { applicationModule } from "@/infrastructure/container";
+import { NextRequest } from "next/server";
 import {
   GET as listApplications,
   POST as createApplication,
@@ -17,7 +18,7 @@ beforeEach(async () => {
 
   it("creates an application and returns the created record", async () => {
     const response = await createApplication(
-      new Request(baseUrl, {
+      new NextRequest(baseUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -41,7 +42,7 @@ beforeEach(async () => {
       status: "cv_sent",
     });
 
-    const list = await listApplications();
+    const list = await listApplications(new NextRequest(baseUrl));
     const items = await list.json();
 
     expect(items).toHaveLength(1);
@@ -50,7 +51,7 @@ beforeEach(async () => {
 
   it("updates application status through PATCH endpoint", async () => {
     const createResponse = await createApplication(
-      new Request(baseUrl, {
+      new NextRequest(baseUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -66,12 +67,12 @@ beforeEach(async () => {
     const created = await createResponse.json();
 
     const updateResponse = await updateApplication(
-      new Request(`${baseUrl}/${created.id}`, {
+      new NextRequest(`${baseUrl}/${created.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "technical_interview" }),
       }),
-      { params: { id: created.id } },
+      { params: Promise.resolve({ id: created.id }) },
     );
 
     expect(updateResponse.status).toBe(200);
@@ -81,7 +82,7 @@ beforeEach(async () => {
 
   it("adds comments via comments endpoint", async () => {
     const createResponse = await createApplication(
-      new Request(baseUrl, {
+      new NextRequest(baseUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -97,12 +98,12 @@ beforeEach(async () => {
     const created = await createResponse.json();
 
     const commentResponse = await addComment(
-      new Request(`${baseUrl}/${created.id}/comments`, {
+      new NextRequest(`${baseUrl}/${created.id}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ comment: "Phone screen complete" }),
       }),
-      { params: { id: created.id } },
+      { params: Promise.resolve({ id: created.id }) },
     );
 
     expect(commentResponse.status).toBe(200);

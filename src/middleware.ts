@@ -1,8 +1,16 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const middlewareConfig = process.env.NODE_ENV === "test" ? {} : { publicRoutes: ["/"] };
+const isPublicRoute = createRouteMatcher(["/"]);
 
-export default clerkMiddleware(middlewareConfig);
+export default clerkMiddleware(async (auth, req) => {
+  if (process.env.NODE_ENV === "test") {
+    return;
+  }
+
+  if (!isPublicRoute(req)) {
+    await auth.protect();
+  }
+});
 
 export const config = {
   matcher: [

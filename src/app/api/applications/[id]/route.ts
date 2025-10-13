@@ -8,15 +8,13 @@ import { formatErrorResponse } from "@/lib/errors/formatErrorResponse";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const ownerId = requireUserId(request);
+    const { id } = await params;
     const application =
-      await applicationModule.queries.getApplicationById.execute(
-        params.id,
-        ownerId,
-      );
+      await applicationModule.queries.getApplicationById.execute(id, ownerId);
 
     if (!application) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -33,23 +31,21 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const ownerId = requireUserId(request);
+    const { id } = await params;
     const body = updateApplicationStatusSchema.parse(await request.json());
 
     await applicationModule.commands.updateStatus.execute({
-      id: params.id,
+      id,
       status: body.status,
       ownerId,
     });
 
     const updated =
-      await applicationModule.queries.getApplicationById.execute(
-        params.id,
-        ownerId,
-      );
+      await applicationModule.queries.getApplicationById.execute(id, ownerId);
 
     if (!updated) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
