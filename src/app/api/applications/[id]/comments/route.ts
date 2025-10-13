@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { applicationModule } from "@/infrastructure/container";
 import { addApplicationCommentSchema } from "@/lib/validation/applicationSchemas";
@@ -8,7 +8,7 @@ import { requireUserId } from "@/lib/auth/isAuthenticated";
 import { formatErrorResponse } from "@/lib/errors/formatErrorResponse";
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } },
 ) {
   try {

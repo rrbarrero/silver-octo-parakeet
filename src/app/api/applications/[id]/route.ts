@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { applicationModule } from "@/infrastructure/container";
 import { updateApplicationStatusSchema } from "@/lib/validation/applicationSchemas";
@@ -7,7 +7,7 @@ import { requireUserId } from "@/lib/auth/isAuthenticated";
 import { formatErrorResponse } from "@/lib/errors/formatErrorResponse";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } },
 ) {
   try {
@@ -32,7 +32,7 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } },
 ) {
   try {

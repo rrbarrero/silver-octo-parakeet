@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 //
 
 import { applicationModule } from "@/infrastructure/container";
@@ -10,7 +10,7 @@ import { formatErrorResponse } from "@/lib/errors/formatErrorResponse";
 
 //
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const ownerId = requireUserId(request);
     const applications =
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const payload = createApplicationInputSchema.parse(await request.json());
     const ownerId = requireUserId(request);
